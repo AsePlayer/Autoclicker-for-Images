@@ -7,6 +7,7 @@ import win32api
 import win32con
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import ttk
 import threading
 
 # Function to handle clicking
@@ -24,7 +25,6 @@ def look_for_image(image_path):
             pyautogui.moveTo(start)  # Moves the mouse to the coordinates of the image
             click()
     except Exception:
-        time.sleep(3)
         message_label.config(text=f'no {image_path} image found, sleeping')
 
 # Function to add more images via file explorer
@@ -65,7 +65,7 @@ def continuous_image_search():
     while not keyboard.is_pressed('q'):
         for item in images_listbox.get(0, tk.END):
             look_for_image(item)
-        time.sleep(0.1)  # Adjust this delay according to your needs
+            time.sleep(click_time_slider.get())  # Adjust this delay according to your needs
 
 # Create Tkinter window
 root = tk.Tk()
@@ -97,6 +97,17 @@ clear_button.pack()
 # Button to exit window
 exit_button = tk.Button(root, text="Exit", command=root.quit)
 exit_button.pack()
+
+# Slider to adjust click time
+click_time_label = tk.Label(root, text="Click time: 0 seconds")
+click_time_label.pack()
+
+def update_click_time_label(event):
+    click_time_label.config(text=f"Click time: Every {click_time_slider.get()} seconds")
+
+click_time_slider = tk.Scale(root, from_=0.1, to=5, resolution=0.1, orient=tk.HORIZONTAL, command=update_click_time_label)
+click_time_slider.set(2.5)  # Initial value
+click_time_slider.pack()
 
 # Main loop
 looking_thread = None
